@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Test Fetch</title>
+  </head>
+  <body>
+    <h1>Home page (/)</h1>
+
+    <button onclick="callBackend()">Click me</button>
+
+    <p>Response from backend:</p>
+    <pre id="output"></pre>
+
+    <script>
+      async function callBackend() {
+        try {
+          // relative URL is enough because page is served from same origin
+          const res = await fetch("/hello");
+          const data = await res.text();
+
+          console.log("From backend:", data);
+          document.getElementById("output").textContent = data;
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    </script>
+  </body>
+</html>

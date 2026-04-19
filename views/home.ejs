@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>UI Screen</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<style>
+		/* ==== FROM styles.css ==== */
+
+		body {
+			margin: 0;
+			font-family: Arial, sans-serif;
+			background-color: #f5f5f5;
+		}
+
+		.header {
+			padding: 20px;
+			background-color: #ffffff;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		#currentTime {
+			font-size: 18px;
+			color: #555;
+		}
+
+		.container {
+			padding: 20px;
+		}
+
+		.icon-row-wrapper {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.scroll-btn {
+			background-color: #ddd;
+			border: none;
+			padding: 10px;
+			cursor: pointer;
+			border-radius: 4px;
+			font-size: 18px;
+		}
+
+		#iconRow {
+			display: flex;
+			gap: 15px;
+			overflow-x: auto;
+			scroll-behavior: smooth;
+			padding: 10px;
+			background-color: #fff;
+			border-radius: 8px;
+			width: 80%;
+		}
+
+		.icon-card {
+			min-width: 100px;
+			min-height: 100px;
+			background-color: #eee;
+			border-radius: 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 20px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- Header -->
+	<div class="header">
+		<h2>My UI</h2>
+		<div id="currentTime">Loading...</div>
+	</div>
+
+	<!-- Main Content -->
+	<div class="container">
+		<div class="icon-row-wrapper">
+			<button class="scroll-btn" onclick="scrollLeft()">◀</button>
+
+			<div id="iconRow">
+				<div class="icon-card">A</div>
+				<div class="icon-card">B</div>
+				<div class="icon-card">C</div>
+				<div class="icon-card">D</div>
+				<div class="icon-card">E</div>
+				<div class="icon-card">F</div>
+				<div class="icon-card">G</div>
+				<div class="icon-card">H</div>
+				<div class="icon-card">I</div>
+				<div class="icon-card">J</div>
+			</div>
+
+			<button class="scroll-btn" onclick="scrollRight()">▶</button>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script>
+		/* ==== FROM script.js ==== */
+
+		function showTime() {
+			document.getElementById('currentTime').innerHTML = new Date().toUTCString();
+		}
+
+		showTime();
+		setInterval(function () {
+			showTime();
+		}, 1000);
+
+		function scrollLeft() {
+			const row = document.getElementById('iconRow');
+			console.log('scrollLeft before:', row.scrollLeft);
+			row.scrollBy({ left: -100, behavior: 'smooth' });
+		}
+
+		function scrollRight() {
+			const row = document.getElementById('iconRow');
+			console.log('scrollLeft before:', row.scrollLeft);
+			row.scrollBy({ left: 100, behavior: 'smooth' });
+		}
+	</script>
+
+</body>
+</html>

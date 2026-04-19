@@ -1,0 +1,27 @@
+<form action="/submit" method="POST">
+  <input name="username" placeholder="Enter name">
+  <button type="submit">Send</button>
+</form>
+<button onclick="send2Backend()">Send</button>
+<script>
+async function send2Backend() {
+    const data ={
+        name : "Sheril",
+        age: 22
+    };
+    const response = await fetch("/saveUser", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+    
+  });
+
+  const result = await response.text();
+  console.log(result);
+    
+}
+
+
+
+
+</script>

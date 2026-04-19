@@ -1,0 +1,10 @@
+<button onclick="callBackend()">Click me</button>
+
+<script>
+async function callBackend() {
+  const res = await fetch("http://localhost:3000/hello");
+  const data = await res.json();
+
+  console.log(data);    // { msg: "Hello from backend!" }
+}
+</script>

@@ -1,0 +1,263 @@
+body{
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+  overflow-y: scroll;
+}
+.title {
+	color: #5C6AC4;
+}
+.top-bar {
+  background-color: #0055aa;     /* blue background */
+  color: white;                  /* white text */
+  display: flex;                 /* use flexbox to split left & right */
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;             /* space inside the bar */
+  font-size: 0.7em;
+  font-family: sans-serif;
+}
+
+.top-bar-left {
+  text-align: left;
+}
+
+.top-bar-right {
+  text-align: right;
+  gap: 7px;
+
+}
+.sm{
+  font-size: 2.0em;
+padding: 0 5px;
+
+}
+.logo-bar {
+  align-items: center;
+  justify-content: center;  
+  background-color: #f0f0f0;     /* light grey background */
+  display: flex;                 /* arrange items in a row */
+  align-items: center;           /* center vertically */
+  padding: 0px 10px;             /* thin vertical height, some space left/right */
+  width: 100%;  
+  height: 20%;                 /* full width */
+  box-sizing: border-box;        /* include padding in width */
+}
+
+.logo-img {
+  align-items: center;
+  height: 80px;                  /* adjust to make it thinner */
+  margin-right: 0px;            /* space between logo and name */
+}
+
+.logo-text {
+  font-size: 3em;              /* smaller text */
+  font-family: 'Great Vibes', cursive;  /* your chosen font */
+  color: black;                  /* or any color you like */
+  letter-spacing: 6px;
+  transform: scaleX(1);
+  display: inline-block;
+}
+.hero {
+  position: relative;       
+  height: 100vh;           
+  text-align: left;       
+  color: white;
+  overflow: hidden;
+}
+
+
+.hero-img {
+  width: 100%;
+  clip-path: inset(0 0 0 0);
+  display: block;
+  filter: brightness(77%) blur(1px) !important; 
+}
+
+.hero-text {
+  text-align: left;
+  position: absolute;      /* place text over image */
+  top: 18%;                /* move down halfway */
+  left: 24%;               /* move right halfway */
+  transform: translate(-50%, -50%);  /* perfectly center */
+  font-size: 4em;          /* adjust as needed */
+  font-family: 'Great Vibes', cursive;  /* or your chosen font */
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.6); /* helps text stand out */
+}
+.paratext
+{
+  
+  text-align: left;
+  position: absolute;      /* place text over image */
+  top: 35%;                /* move down halfway */
+  left: 20%;               /* move right halfway */
+  transform: translate(-50%, -50%);  /* perfectly center */
+  font-size: 1.5em;          /* adjust as needed */
+  font-family: 'Great Vibes';  /* or your chosen font */
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.6); /* helps text stand out */
+}
+.quote1 {
+  position: absolute;
+  top: 13%;    /* vertical position: adjust as needed */
+  right: 5%;           /* distance from right edge */
+  font-size: 1.2em;    /* adjust size */
+  color: white;        /* make sure it’s visible */
+  font-family: 'Montserrat', sans-serif;
+  font-style: italic;
+  text-align: right;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.6); /* optional: makes text readable over image */
+}
+.quote2 {
+  position: absolute;
+  top:28%;  /* vertical position: adjust as needed */
+  right: 5%;           /* distance from right edge */
+  font-size: 1.2em;    /* adjust size */
+  color: white;        /* make sure it’s visible */
+  font-family: 'Montserrat', sans-serif;
+  font-style: italic;
+  text-align: right;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.6); /* optional: makes text readable over image */
+}
+.author {
+  font-style: normal;
+  font-size: 0.8em;
+  margin-top: 5px;
+  display: block;
+  color: white;
+}
+.btn-get-started {
+  position: absolute;
+  top: 47%; 
+  left: 12%;       /* distance from the left edge */
+  display: inline-block;
+  padding: 15px 43px;
+  margin-top: 10px;
+   background-color: rgba(226, 216, 24, 0.7);
+  color: rgb(49, 49, 49);
+  text-decoration: none;
+  border-radius: 10px;
+ font-family: 'Great Vibes', cursive;
+  font-size: 2.2em;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+
+}
+
+
+.btn-get-started:hover {
+  background-color: #2980b9;  /* darker on hover */
+}
+.btn-read-more{
+position: absolute;
+  top: 61%; 
+  left: 12%;       /* distance from the left edge */
+  display: inline-block;
+  padding: 15px 35px;
+  margin-top: 10px;
+  background-color: rgba(226, 216, 24, 0.7);
+ color: rgb(49, 49, 49);
+  text-decoration: none;
+  border-radius: 10px;
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.2em;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+
+
+}
+.btn-read-more:hover {
+  background-color: #2980b9;  /* darker on hover */
+}
+.lower{
+  background-color: #ffffff;
+  height: 2px;
+}
+
+
+.break-rect {
+  width: 80%;
+  height: 250px;
+  background-color: rgb(27, 43, 96);
+  position: relative;
+  top: -130px;              /* pull up half of its height */
+  margin: 0 auto;          /* center horizontally */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 2;
+  display: flex;                  /* keep flexbox */
+  justify-content: flex-start;    /* align items to the left */
+  align-items: center;            /* keep them vertically centered */
+  padding-left: 30px;      
+}
+.phrase{
+  font-size: 4em;
+  font-family: 'Great Vibes', cursive;
+  padding-left: 50px;
+  color: #f0f0f0;
+  padding: 100px;
+}
+.category-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 20px;
+  margin-left: 50px;
+  width: fit-content;
+}
+
+.icon-row {
+  
+  
+  display: flex;
+  overflow-x: auto;           /* important: allow scroll */
+  scroll-behavior: smooth;
+  width: 500px;          /* about 3 icons visible */
+  
+  left: 60%;      /* hide scrollbar Firefox */
+  gap: 30px;
+}
+
+
+.category-icon {
+  flex: 0 0 auto;
+  width: 90px;                /* or your current width */
+  text-align: center;
+  color: white;
+  transition: transform 0.3s, box-shadow 0.3s;   /* smooth effect */
+}
+
+
+
+.category-icon i {
+  font-size: 6em;
+  margin-bottom: 4px;
+ padding: 20px;
+  width: 70px;
+}
+
+.scroll-btn {
+  background: white;
+  border: none;
+  font-size: .5em;
+  cursor: pointer;
+  color: rgb(30, 59, 154);
+  margin: 0 5px;
+  border-radius: 4px;
+}
+.icon-row::-webkit-scrollbar {
+  height: 6px;                     /* height of horizontal scrollbar */
+}
+
+.icon-row::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.2);   /* track color, subtle transparent */
+  border-radius: 3px;
+}
+
+.icon-row::-webkit-scrollbar-thumb {
+  background-color: #ffffff;       /* thumb color (white) */
+  border-radius: 3px;
+}
+
+.icon-row::-webkit-scrollbar-thumb:hover {
+  background-color: #ccc;          /* thumb color on hover */
+}
