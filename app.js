@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+require('dotenv').config();
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -76,8 +77,9 @@ async function fetchOSM(lat, lon, radius, prefs) {
     .filter(Boolean)
     .join(",");
 
-  const url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${lon},${lat},${radius}&limit=50&apiKey=e3e518b2919d4d00a83f94ef49d18424`;
+  const url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${lon},${lat},${radius}&limit=50&apiKey=${process.env.GEOAPIFY_KEY}`;
 
+  
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error("Geoapify error: " + res.status);
