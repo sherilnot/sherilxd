@@ -1,83 +1,453 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap" rel="stylesheet">
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Urbanzy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f7;
+  --ink:#1a1a1a;
+  --mid:#6b6560;
+  --light:#e8e4de;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Jost',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;overflow-x:hidden}
 
-    <title>Urbanzy</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 64px;height:68px;
+  transition:background 0.4s,border-color 0.4s;
+}
+nav.solid{background:rgba(250,249,247,0.96);border-bottom:1px solid var(--light);backdrop-filter:blur(8px)}
+.nav-logo{font-family:var(--serif);font-size:22px;font-weight:400;letter-spacing:0.04em;text-decoration:none;color:var(--ink)}
+.nav-links{display:flex;align-items:center;gap:40px}
+.nav-links a{font-size:12px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;color:var(--mid);transition:color 0.3s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{
+  font-size:11px;letter-spacing:0.14em;text-transform:uppercase;
+  padding:10px 24px;border:1px solid var(--ink);
+  text-decoration:none;color:var(--ink);
+  transition:background 0.3s,color 0.3s;
+}
+.nav-cta:hover{background:var(--ink);color:var(--bg)}
 
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-  </head>
-  
-  <body>
-    <script src="script.js"></script>
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <span class="icon">📧</span> <span style="font-family: 'Montserrat', sans-serif;">yourmail@example.com</span>   |  
-      <span class="icon">📞</span> 
-      <span style="font-family: 'Lato', sans-serif;">+91-9876543210</span>
-    </div>
-    <div class="top-bar-right">
-      <span style="font-family: 'Montserrat', sans-serif; margin-right: 10px;">Follow us on</span>
-    <a href="#" class="sm" style="font-size: 2em;  color: white; text-decoration: none; margin-left: 5px;">
-      <i class="fab fa-instagram"></i>
-    </a>
-    <a href="#" class="sm" style="color: rgb(99, 48, 48); text-decoration: none; margin-left: 5px;">
-      <i class="fab fa-facebook"></i>
-    </a>
-    <a href="#"class="sm" style="color: white; text-decoration: none; margin-left: 5px;">
-      <i class="fab fa-twitter"></i>
-    </a>
-    <a href="#" class="sm" style="color: white; text-decoration: none; margin-left: 5px;">
-      <i class="fab fa-linkedin"></i>
-    </a>
+/* HERO */
+.hero{
+  height:100vh;min-height:640px;
+  position:relative;overflow:hidden;
+  display:flex;align-items:flex-end;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:url('images/Gemini_Generated_Image_ykkws4ykkws4ykkw.png') center/cover no-repeat;
+  will-change:transform;
+}
+.hero-veil{
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(10,9,8,0.72) 0%, rgba(10,9,8,0.2) 55%, transparent 100%);
+}
+.hero-body{
+  position:relative;z-index:2;
+  width:100%;padding:0 64px 72px;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  gap:40px;
+}
+.hero-hl{
+  font-family:var(--serif);
+  font-size:clamp(48px,6.5vw,88px);
+  font-weight:400;line-height:1.05;
+  letter-spacing:-0.01em;
+  color:#f5f1ea;
+}
+.hero-hl em{font-style:italic;opacity:0.75}
+.hero-side{
+  max-width:320px;flex-shrink:0;
+  display:flex;flex-direction:column;gap:28px;
+  align-items:flex-end;text-align:right;
+}
+.hero-sub{font-size:13px;line-height:1.8;color:rgba(245,241,234,0.65);letter-spacing:0.03em}
+.hero-btns{display:flex;gap:12px;justify-content:flex-end}
+.btn-light{
+  font-size:11px;letter-spacing:0.14em;text-transform:uppercase;
+  padding:11px 28px;border:1px solid rgba(245,241,234,0.55);
+  text-decoration:none;color:#f5f1ea;
+  transition:background 0.3s,border-color 0.3s;
+}
+.btn-light:hover{background:rgba(245,241,234,0.12);border-color:rgba(245,241,234,0.9)}
+.btn-light.solid{background:#f5f1ea;color:var(--ink)}
+.btn-light.solid:hover{background:white}
+
+/* DIVIDER */
+.rule{height:1px;background:var(--light);margin:0 64px}
+
+/* CATEGORIES */
+.cats{padding:80px 64px}
+.section-tag{
+  font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--mid);margin-bottom:48px;
+}
+.cats-row{display:flex;gap:0;border-top:1px solid var(--light);border-left:1px solid var(--light)}
+.cat{
+  flex:1;
+  padding:36px 28px;
+  border-right:1px solid var(--light);border-bottom:1px solid var(--light);
+  display:flex;flex-direction:column;gap:14px;
+  cursor:default;
+  transition:background 0.3s;
+}
+.cat:hover{background:#f3f0ea}
+.cat i{font-size:18px;color:var(--mid);transition:color 0.3s}
+.cat:hover i{color:var(--ink)}
+.cat-name{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--mid);transition:color 0.3s}
+.cat:hover .cat-name{color:var(--ink)}
+
+/* SPLIT SECTION */
+.split{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--light);
+}
+.split-img{
+  position:relative;overflow:hidden;aspect-ratio:1/1;
+}
+.split-img img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(0.85)}
+.split-text{
+  padding:80px 72px;
+  display:flex;flex-direction:column;justify-content:center;gap:32px;
+  border-left:1px solid var(--light);
+}
+.split-hl{font-family:var(--serif);font-size:clamp(32px,3.5vw,52px);font-weight:400;line-height:1.15;letter-spacing:-0.01em}
+.split-hl em{font-style:italic}
+.split-body{font-size:14px;line-height:1.9;color:var(--mid);max-width:380px}
+.split-link{
+  font-size:11px;letter-spacing:0.14em;text-transform:uppercase;
+  text-decoration:none;color:var(--ink);
+  display:inline-flex;align-items:center;gap:10px;
+  padding-bottom:2px;border-bottom:1px solid var(--ink);
+  width:fit-content;
+  transition:gap 0.3s;
+}
+.split-link:hover{gap:16px}
+
+/* FEATURES STRIP */
+.feats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--light);
+}
+.feat{
+  padding:52px 40px;
+  border-right:1px solid var(--light);
+  display:flex;flex-direction:column;gap:16px;
+}
+.feat:last-child{border-right:none}
+.feat-n{font-family:var(--serif);font-size:13px;color:var(--light);font-style:italic}
+.feat-t{font-size:15px;font-weight:400;letter-spacing:0.02em}
+.feat-d{font-size:13px;line-height:1.8;color:var(--mid)}
+
+/* QUOTE */
+.quote-wrap{
+  padding:120px 64px;
+  text-align:center;
+  border-top:1px solid var(--light);
+  border-bottom:1px solid var(--light);
+}
+.quote-text{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(22px,3vw,38px);font-weight:400;
+  line-height:1.4;color:var(--ink);
+  max-width:760px;margin:0 auto 24px;
+}
+.quote-by{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--mid)}
+
+/* FOOTER */
+footer{
+  padding:56px 64px;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  gap:40px;
+}
+.foot-logo{font-family:var(--serif);font-size:20px;font-weight:400}
+.foot-info{font-size:12px;line-height:2;color:var(--mid);text-align:center}
+.foot-info a{color:var(--mid);text-decoration:none}
+.foot-info a:hover{color:var(--ink)}
+.foot-social{display:flex;gap:20px;justify-content:flex-end}
+.foot-social a{font-size:13px;color:var(--mid);text-decoration:none;transition:color 0.3s}
+.foot-social a:hover{color:var(--ink)}
+.foot-copy{font-size:11px;color:#bbb;letter-spacing:0.06em;margin-top:8px;text-align:right}
+
+/* REVEAL */
+.r{opacity:0;transform:translateY(20px);transition:opacity 0.8s ease,transform 0.8s ease}
+.r.show{opacity:1;transform:none}
+.r.d1{transition-delay:0.08s}.r.d2{transition-delay:0.16s}.r.d3{transition-delay:0.24s}.r.d4{transition-delay:0.32s}
+
+/* HAMBURGER */
+.ham{
+  display:none;
+  flex-direction:column;justify-content:center;gap:5px;
+  width:40px;height:40px;cursor:pointer;
+  background:none;border:none;padding:4px;
+}
+.ham span{
+  display:block;height:1px;background:var(--ink);
+  transition:transform 0.3s,opacity 0.3s,width 0.3s;
+  width:24px;
+}
+.ham.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.ham.open span:nth-child(2){opacity:0;width:0}
+.ham.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+/* MOBILE DRAWER */
+.mobile-menu{
+  display:none;
+  position:fixed;top:68px;left:0;right:0;z-index:49;
+  background:rgba(250,249,247,0.98);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--light);
+  padding:0;
+  max-height:0;overflow:hidden;
+  transition:max-height 0.4s cubic-bezier(0.16,1,0.3,1),padding 0.4s;
+}
+.mobile-menu.open{max-height:320px;padding:8px 0 20px}
+.mobile-menu a{
+  display:block;padding:14px 28px;
+  font-size:13px;letter-spacing:0.1em;text-transform:uppercase;
+  text-decoration:none;color:var(--mid);
+  border-bottom:1px solid var(--light);
+  transition:color 0.2s,background 0.2s;
+}
+.mobile-menu a:last-child{border-bottom:none;color:var(--ink);font-weight:400}
+.mobile-menu a:active{background:#f0ede7}
+
+/* ── TABLET 860px ── */
+@media(max-width:860px){
+  nav{padding:0 24px;height:60px}
+  .nav-links{display:none}
+  .ham{display:flex}
+  .mobile-menu{display:block;top:60px}
+  .nav-cta{display:none}
+
+  .hero{min-height:100svh}
+  .hero-body{
+    padding:0 24px 48px;
+    flex-direction:column;align-items:flex-start;gap:24px;
+  }
+  .hero-side{align-items:flex-start;text-align:left;max-width:100%}
+  .hero-btns{justify-content:flex-start}
+
+  .rule{margin:0 24px}
+  .cats{padding:56px 24px}
+  .cats-row{flex-wrap:wrap}
+  .cat{flex:0 0 33.33%;padding:28px 20px}
+
+  .split{grid-template-columns:1fr}
+  .split-img{aspect-ratio:16/9}
+  .split-text{
+    padding:48px 24px;
+    border-left:none;border-top:1px solid var(--light);
+  }
+  .split-body{max-width:100%}
+
+  .feats{grid-template-columns:1fr 1fr}
+  .feat{padding:36px 28px}
+  .feat:nth-child(2){border-right:none}
+  .feat:nth-child(3){border-right:1px solid var(--light);border-top:1px solid var(--light)}
+  .feat:nth-child(4){border-top:1px solid var(--light)}
+
+  .quote-wrap{padding:80px 24px}
+
+  footer{
+    flex-direction:column;align-items:flex-start;
+    padding:40px 24px;gap:32px;
+  }
+  .foot-info{text-align:left}
+  .foot-copy{text-align:left}
+  .foot-social{justify-content:flex-start}
+}
+
+/* ── MOBILE 480px ── */
+@media(max-width:480px){
+  nav{padding:0 20px}
+  .nav-logo{font-size:19px}
+
+  .hero-hl{font-size:clamp(38px,11vw,56px)}
+  .hero-body{padding:0 20px 40px}
+  .hero-sub{font-size:13px}
+  .btn-light{padding:12px 20px;font-size:10px}
+
+  .rule{margin:0 20px}
+  .cats{padding:48px 20px}
+  .cat{flex:0 0 50%;padding:24px 18px}
+  .cat:nth-child(odd){border-right:1px solid var(--light)}
+  .cat:nth-child(even){border-right:none}
+
+  .split-img{aspect-ratio:4/3}
+  .split-text{padding:40px 20px;gap:24px}
+  .split-hl{font-size:clamp(28px,8vw,40px)}
+
+  .feats{grid-template-columns:1fr}
+  .feat{padding:32px 20px;border-right:none;border-top:1px solid var(--light)}
+  .feat:first-child{border-top:none}
+  .feat:nth-child(3){border-right:none}
+
+  .quote-wrap{padding:64px 20px}
+
+  footer{padding:36px 20px;gap:28px}
+  .foot-social{gap:24px}
+  .foot-social a{font-size:16px}
+  .mobile-menu a{padding:16px 20px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a class="nav-logo" href="#">Urbanzy</a>
+  <div class="nav-links">
+    <a href="#explore">Explore</a>
+    <a href="#features">Features</a>
+    <a href="mailto:yourmail@example.com">Contact</a>
   </div>
-  </div>
-  <div class="logo-bar">
-  <img src="images/logo.png" alt="CityExplorer Logo" class="logo-img">
-  <span class="logo-text">Urbanzy!</span>
+  <a href="/location" class="nav-cta">Get Started</a>
+  <button class="ham" id="ham" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#explore" class="menu-link">Explore</a>
+  <a href="#features" class="menu-link">Features</a>
+  <a href="mailto:yourmail@example.com" class="menu-link">Contact</a>
+  <a href="/location" class="menu-link">Get Started</a>
 </div>
-  
-    <div class="hero">
-       <img src="images/Gemini_Generated_Image_ykkws4ykkws4ykkw.png" alt="City View" class="hero-img">
-       <div class="hero-text">Discover hidden gems <br> in your city</div>
-       <p class="paratext">  Our website helps you discover and explore<br> a world of options tailored to your preferences,<br> making every experience unforgettable</p>
-       <div class="quote1">
-        "One's destination is never a place,<br> but a new way of seeing things."
-       <div class="author">– Henry Miller</div>
-       </div>
-       <div class="quote2">
-        "To be a flâneur is to be a keen observer<br>urban life, to drift through the city<br>hout purpose other than to experience it."
-       <div class="author">– Charles Baudelaire</div>
-       </div>
-       <a href="/location" class="btn-get-started">Get Started</a>
-       <a href="text.txt" class="btn-read-more">Read More</a>
-       
+
+<section class="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-veil"></div>
+  <div class="hero-body">
+    <h1 class="hero-hl">
+      Discover<br>
+      <em>hidden gems</em><br>
+      in your city
+    </h1>
+    <div class="hero-side">
+      <p class="hero-sub">Every city keeps secrets. We help you find them — places tailored to your preferences, making every experience unforgettable.</p>
+      <div class="hero-btns">
+        <a href="text.txt" class="btn-light">Read More</a>
+        <a href="/location" class="btn-light solid">Get Started</a>
+      </div>
     </div>
-   <div class="break-rect">
-  <div class="phrase">Discover more.<br>Live local.</div>
-  <div class="category-section">
-    
-    <div class="icon-row" id="iconRow">
-      <div class="category-icon"><i class="fas fa-utensils"></i></div>
-      <div class="category-icon"><i class="fas fa-shopping-bag"></i></div>
-      <div class="category-icon"><i class="fas fa-film"></i></div>
-      <div class="category-icon"><i class="fas fa-spa"></i></div>
-      <div class="category-icon"><i class="fas fa-tree"></i></div>
-      <div class="category-icon"><i class="fas fa-landmark"></i></div>
-    </div>
-    
+  </div>
+</section>
+
+<section class="cats" id="explore">
+  <p class="section-tag r">What we cover</p>
+  <div class="cats-row">
+    <div class="cat r d1"><i class="fas fa-utensils"></i><span class="cat-name">Dining</span></div>
+    <div class="cat r d2"><i class="fas fa-shopping-bag"></i><span class="cat-name">Shopping</span></div>
+    <div class="cat r d3"><i class="fas fa-film"></i><span class="cat-name">Cinema</span></div>
+    <div class="cat r d1"><i class="fas fa-spa"></i><span class="cat-name">Wellness</span></div>
+    <div class="cat r d2"><i class="fas fa-tree"></i><span class="cat-name">Parks</span></div>
+    <div class="cat r d3"><i class="fas fa-landmark"></i><span class="cat-name">Culture</span></div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<section class="split">
+  <div class="split-img r">
+    <img src="images/Gemini_Generated_Image_ykkws4ykkws4ykkw.png" alt="City" id="splitImg"/>
+  </div>
+  <div class="split-text r d2" id="features">
+    <p class="section-tag">Why Urbanzy</p>
+    <h2 class="split-hl">Built for the<br><em>curious mind</em></h2>
+    <p class="split-body">Our recommendation engine surfaces places that mass-review platforms bury. Filtered by what actually matters — ambiance, timing, authenticity. Paired with live crowd data and a Wander Mode for when you have no plan at all.</p>
+    <a href="/location" class="split-link">Start Exploring <i class="fas fa-arrow-right" style="font-size:10px"></i></a>
+  </div>
+</section>
+
+<div class="feats r">
+  <div class="feat d1">
+    <span class="feat-n">01</span>
+    <div class="feat-t">Location Aware</div>
+    <div class="feat-d">Surfaces the best nearby spots in real time, filtered by what matters to you.</div>
+  </div>
+  <div class="feat d2">
+    <span class="feat-n">02</span>
+    <div class="feat-t">Curated Picks</div>
+    <div class="feat-d">Past the noise of mass reviews — handpicked places with genuine character.</div>
+  </div>
+  <div class="feat d3">
+    <span class="feat-n">03</span>
+    <div class="feat-t">Live Intel</div>
+    <div class="feat-d">Real-time wait times and crowd data so you always arrive at the right moment.</div>
+  </div>
+  <div class="feat d4">
+    <span class="feat-n">04</span>
+    <div class="feat-t">Wander Mode</div>
+    <div class="feat-d">Tell us your mood and free time. We'll route you somewhere unexpected.</div>
   </div>
 </div>
 
-    <div class="lower">
-  <h2></h2>
-  <p></p>
+<div class="quote-wrap r">
+  <p class="quote-text">"One's destination is never a place, but a new way of seeing things."</p>
+  <p class="quote-by">— Henry Miller</p>
 </div>
 
+<footer>
+  <div>
+    <div class="foot-logo">Urbanzy</div>
+  </div>
+  <div class="foot-info">
+    <a href="mailto:yourmail@example.com">yourmail@example.com</a><br>
+    <a href="tel:+919876543210">+91 98765 43210</a><br>
+    © 2025 Urbanzy
+  </div>
+  <div>
+    <div class="foot-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+    <div class="foot-copy">Discover more. Live local.</div>
+  </div>
+</footer>
+
+<script>
+const bg=document.getElementById('heroBg');
+const nav=document.getElementById('nav');
+const ham=document.getElementById('ham');
+const menu=document.getElementById('mobileMenu');
+
+window.addEventListener('scroll',()=>{
+  bg.style.transform=`translateY(${window.scrollY*0.38}px)`;
+  nav.classList.toggle('solid',window.scrollY>40);
+},{passive:true});
+
+ham.addEventListener('click',()=>{
+  const open=menu.classList.toggle('open');
+  ham.classList.toggle('open',open);
+  ham.setAttribute('aria-expanded',open);
+});
+
+document.querySelectorAll('.menu-link').forEach(a=>{
+  a.addEventListener('click',()=>{
+    menu.classList.remove('open');
+    ham.classList.remove('open');
+    ham.setAttribute('aria-expanded','false');
+  });
+});
+
+const obs=new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('show');obs.unobserve(x.target)}});
+},{threshold:0.12});
+document.querySelectorAll('.r').forEach(el=>obs.observe(el));
+</script>
 </body>
-
 </html>

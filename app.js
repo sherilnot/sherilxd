@@ -14,7 +14,7 @@ fetch("https://overpass.openstreetmap.ru/api/interpreter")
   .catch(e => console.log("Cannot reach:", e.message));
 
 }
-hii();
+
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371000; // Earth radius in meters
   const toRad = deg => deg * Math.PI / 180;
@@ -150,9 +150,8 @@ app.post('/api/location', async (req, res) => {
     console.log("Not Valid:", req.body);
     return res.status(400).send("Invalid Input");
   }
-  var lati = 11.3216;
-  var longi =75.9337;
-  const results = await fetchOSM(lati,longi,radiusNum,prefs);
+ 
+  const results = await fetchOSM(lat,lon,radiusNum,prefs);
   console.log(results);
   res.json({
       count: results.length,

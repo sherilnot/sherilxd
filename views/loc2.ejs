@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Urbanzy — Nearby Places</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0d0d0d;
+      --ink-2: #3a3a3a;
+      --ink-3: #888;
+      --surface: #f7f5f0;
+      --card: #ffffff;
+      --border: rgba(0,0,0,0.09);
+      --border-strong: rgba(0,0,0,0.16);
+      --accent: #1a56db;
+      --accent-bg: #eef3ff;
+      --accent-border: #c3d4fb;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-body);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── LAYOUT ── */
+    .shell {
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 0;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px 20px;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .logo-name {
+      font-family: var(--font-display);
+      font-size: 26px;
+      letter-spacing: -0.5px;
+      color: var(--ink);
+    }
+
+    .logo-name em { font-style: italic; color: var(--accent); }
+
+    .logo-tagline {
+      font-size: 12px;
+      color: var(--ink-3);
+      letter-spacing: 0.04em;
+    }
+
+    .live-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      background: var(--card);
+      font-size: 12px;
+      color: var(--ink-2);
+      font-weight: 500;
+    }
+
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(22,163,74,.18);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(22,163,74,.18); }
+      50% { box-shadow: 0 0 0 6px rgba(22,163,74,.06); }
+    }
+
+    /* ── MAIN BODY ── */
+    .body {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .section-label i { font-size: 12px; }
+
+    /* RADIUS CONTROL */
+    .radius-num {
+      font-family: var(--font-display);
+      font-size: 42px;
+      line-height: 1;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .radius-unit { font-size: 16px; color: var(--ink-3); font-style: italic; }
+    .radius-hint { font-size: 12px; color: var(--ink-3); margin-bottom: 14px; }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 99px;
+      background: linear-gradient(to right, var(--accent) var(--pct,30%), #e0e0e0 var(--pct,30%));
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--accent);
+      box-shadow: 0 2px 8px rgba(26,86,219,.25);
+      cursor: pointer;
+    }
+
+    /* CATEGORIES */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .cat-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .15s;
+      user-select: none;
+      color: var(--ink-2);
+    }
+
+    .cat-pill i { font-size: 14px; color: var(--ink-3); transition: color .15s; }
+
+    .cat-pill.active {
+      background: var(--accent-bg);
+      border-color: var(--accent-border);
+      color: var(--accent);
+    }
+
+    .cat-pill.active i { color: var(--accent); }
+
+    .cat-pill input[type="checkbox"] { display: none; }
+
+    /* ACTIONS */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 11px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .14s;
+      font-family: var(--font-body);
+      border: 1px solid transparent;
+    }
+
+    .btn-outline {
+      background: var(--card);
+      border-color: var(--border-strong);
+      color: var(--ink-2);
+    }
+
+    .btn-outline:hover { background: var(--surface); }
+
+    .btn-primary {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #222; }
+    .btn-primary:active { transform: scale(.98); }
+
+    .btn-gap { display: flex; flex-direction: column; gap: 8px; }
+
+    .status-line {
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-line.ok { color: var(--green); }
+    .status-line.err { color: #dc2626; }
+
+    /* ── RIGHT: MAP + LIST ── */
+    .right {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .map-wrap {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      background: #e8ebe4;
+      min-height: 300px;
+    }
+
+    #map { width: 100%; height: 100%; min-height: 300px; }
+
+    .map-empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: #aaa;
+      pointer-events: none;
+    }
+
+    .map-empty i { font-size: 32px; opacity: .5; }
+    .map-empty p { font-size: 13px; }
+
+    .map-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 5px 11px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* RESULTS BAR */
+    .results-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .results-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .results-title {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .result-count {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ink-3);
+    }
+
+    .results-scroll {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      min-height: 96px;
+    }
+
+    .poi-card {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      min-width: 200px;
+      transition: all .14s;
+      cursor: pointer;
+    }
+
+    .poi-card:hover {
+      border-color: var(--accent-border);
+      background: var(--accent-bg);
+    }
+
+    .poi-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: var(--accent-bg);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .poi-icon.shop { background: var(--green-bg); color: var(--green); }
+    .poi-icon.hotel { background: #faf5ff; color: #7c3aed; }
+
+    .poi-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+
+    .poi-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 3px;
+    }
+
+    .poi-dist { font-size: 11px; color: var(--ink-3); }
+
+    .poi-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+    }
+
+    .list-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--ink-3);
+      font-size: 12px;
+      width: 100%;
+    }
+
+    /* ── SPINNER ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin .8s linear infinite; display: inline-block; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 820px) {
+      html, body { height: auto; }
+      .shell { height: auto; padding: 14px; }
+      .body { grid-template-columns: 1fr; }
+      .right { grid-template-rows: 340px auto; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="logo">
+      <span class="logo-name">Urban<em>zy</em></span>
+      <span class="logo-tagline">discover what's around you</span>
+    </div>
+    <div class="live-pill">
+      <span class="live-dot"></span>
+      Node + JS Practice
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- RADIUS -->
+      <div class="card">
+        <div class="section-label"><i class="fa-regular fa-circle-dot"></i> Search radius</div>
+        <div class="radius-num" id="rad-display">2.0 <span class="radius-unit">km</span></div>
+        <div class="radius-hint">Distance from your location</div>
+        <input type="range" id="rad" min="1" max="20" step="0.5" value="2"
+          oninput="updateRadius(this.value)">
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="card">
+        <div class="section-label"><i class="fa-solid fa-layer-group"></i> Categories</div>
+        <div class="cat-grid">
+          <label class="cat-pill active">
+            <input type="checkbox" name="preferences" value="food" checked>
+            <i class="fa-solid fa-utensils"></i> Food
+          </label>
+          <label class="cat-pill active">
+            <input type="checkbox" name="preferences" value="shopping" checked>
+            <i class="fa-solid fa-bag-shopping"></i> Shopping
+          </label>
+          <label class="cat-pill active">
+            <input type="checkbox" name="preferences" value="hotel" checked>
+            <i class="fa-solid fa-bed"></i> Hotels
+          </label>
+          <label class="cat-pill">
+            <input type="checkbox" name="preferences" value="park">
+            <i class="fa-solid fa-tree"></i> Parks
+          </label>
+          <label class="cat-pill">
+            <input type="checkbox" name="preferences" value="health">
+            <i class="fa-solid fa-heart-pulse"></i> Health
+          </label>
+          <label class="cat-pill">
+            <input type="checkbox" name="preferences" value="transport">
+            <i class="fa-solid fa-bus"></i> Transit
+          </label>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="card">
+        <div class="section-label"><i class="fa-solid fa-bolt"></i> Actions</div>
+        <div class="btn-gap">
+          <button class="btn btn-outline" onclick="sendall()">
+            <i class="fa-solid fa-location-crosshairs"></i> Use my location
+          </button>
+          <button class="btn btn-primary" onclick="submitSearch()">
+            <i class="fa-solid fa-magnifying-glass"></i> Find places
+          </button>
+        </div>
+        <div class="status-line" id="status-line">
+          <i class="fa-regular fa-circle-info"></i> Location not set yet
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT PANEL -->
+    <div class="right">
+
+      <!-- MAP -->
+      <div class="map-wrap">
+        <div id="map-empty" class="map-empty">
+          <i class="fa-regular fa-map"></i>
+          <p>Set your location to load the map</p>
+        </div>
+        <div id="map"></div>
+        <div class="map-badge"><i class="fa-solid fa-map-pin"></i> Live Map</div>
+      </div>
+
+      <!-- RESULTS BAR -->
+      <div class="results-bar">
+        <div class="results-head">
+          <div class="results-title">
+            <i class="fa-solid fa-list-ul" style="color:var(--ink-3);font-size:13px"></i>
+            Nearby Places
+          </div>
+          <span class="result-count" id="result-count">0 results</span>
+        </div>
+        <div class="results-scroll" id="results-list">
+          <div class="list-empty">
+            <i class="fa-regular fa-compass"></i>
+            Hit "Find places" to see results
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- LEAFLET -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  let map = null;
+  let userMarker = null;
+  let placeLayers = [];
+
+  const categoryIconMap = {
+    food: { cls: '', icon: 'fa-utensils' },
+    shopping: { cls: 'shop', icon: 'fa-bag-shopping' },
+    hotel: { cls: 'hotel', icon: 'fa-bed' },
+    park: { cls: '', icon: 'fa-tree' },
+    health: { cls: '', icon: 'fa-heart-pulse' },
+    transport: { cls: '', icon: 'fa-bus' }
+  };
+
+  /* ── Radius slider ── */
+  function updateRadius(val) {
+    const pct = ((val - 1) / (20 - 1)) * 100;
+    document.getElementById('rad').style.setProperty('--pct', pct + '%');
+    document.getElementById('rad-display').innerHTML =
+      parseFloat(val).toFixed(1) + ' <span class="radius-unit">km</span>';
+  }
+  updateRadius(2);
+
+  /* ── Category pill toggle ── */
+  document.querySelectorAll('.cat-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const cb = pill.querySelector('input[type="checkbox"]');
+      pill.classList.toggle('active', cb.checked);
+    });
+  });
+
+  /* ── Status helper ── */
+  function setStatus(msg, type) {
+    const el = document.getElementById('status-line');
+    el.className = 'status-line' + (type ? ' ' + type : '');
+    el.innerHTML = msg;
+  }
+
+  /* ── Haversine ── */
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+    return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) / 1000);
+  }
+
+  /* ── Map init / update ── */
+  function initMap(lat, lon, places) {
+    document.getElementById('map-empty').style.display = 'none';
+
+    const redIcon = new L.Icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25,41], iconAnchor: [12,41], popupAnchor: [1,-34], shadowSize: [41,41]
+    });
+
+    if (!map) {
+      map = L.map('map').setView([lat, lon], 14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+      userMarker = L.marker([lat, lon], { icon: redIcon })
+        .bindPopup('<b>You are here</b>').addTo(map);
+    } else {
+      map.setView([lat, lon], 14);
+      userMarker.setLatLng([lat, lon]);
+      placeLayers.forEach(l => map.removeLayer(l));
+      placeLayers = [];
+    }
+
+    places.forEach(place => {
+      const m = L.marker([place.lat, place.lon])
+        .bindPopup(`<b>${place.name}</b><br>${place.types.join(', ')}`)
+        .addTo(map);
+      placeLayers.push(m);
+    });
+  }
+
+  /* ── Render results bar ── */
+  function renderPlaces(results) {
+    const list = document.getElementById('results-list');
+    const countEl = document.getElementById('result-count');
+    countEl.textContent = results.length + ' result' + (results.length !== 1 ? 's' : '');
+
+    if (!results.length) {
+      list.innerHTML = '<div class="list-empty"><i class="fa-regular fa-compass"></i> No places found — try a wider radius</div>';
+      return;
+    }
+
+    list.innerHTML = results.map(p => {
+      const cat = (p.types && p.types[0]) || 'food';
+      const info = categoryIconMap[cat] || categoryIconMap.food;
+      return `
+        <div class="poi-card">
+          <div class="poi-icon ${info.cls}">
+            <i class="fa-solid ${info.icon}"></i>
+          </div>
+          <div>
+            <div class="poi-name">${p.name}</div>
+            <div class="poi-meta">
+              <span class="poi-dist">${p.distance} km</span>
+              <span class="poi-tag">${cat}</span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Geolocation ── */
+  let currentLat = null, currentLon = null;
+
+  function sendall() {
+    setStatus('<i class="fa-solid fa-circle-notch spin"></i> Getting location…');
+    navigator.geolocation.getCurrentPosition(pos => {
+      currentLat = pos.coords.latitude;
+      currentLon = pos.coords.longitude;
+      setStatus('<i class="fa-solid fa-circle-check"></i> Location set', 'ok');
+    }, handleError);
+  }
+
+  /* ── Search ── */
+  async function submitSearch() {
+    const radius = document.getElementById('rad').value;
+    const prefs = [...document.querySelectorAll('input[name="preferences"]:checked')]
+      .map(cb => cb.value);
+
+    if (!currentLat || !currentLon) {
+      setStatus('<i class="fa-solid fa-triangle-exclamation"></i> Please set your location first', 'err');
+      return;
+    }
+
+    if (!prefs.length) {
+      setStatus('<i class="fa-solid fa-triangle-exclamation"></i> Select at least one category', 'err');
+      return;
+    }
+
+    const btn = document.querySelector('.btn-primary');
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch spin"></i> Searching…';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/location', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat: currentLat, lon: currentLon, radius, prefs })
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        setStatus('<i class="fa-solid fa-triangle-exclamation"></i> ' + msg, 'err');
+        return;
+      }
+
+      const data = await res.json();
+      renderPlaces(data.results);
+      initMap(currentLat, currentLon, data.results);
+      setStatus(`<i class="fa-solid fa-circle-check"></i> Found ${data.count} place(s)`, 'ok');
+    } catch (err) {
+      setStatus('<i class="fa-solid fa-triangle-exclamation"></i> Request failed', 'err');
+      console.error(err);
+    } finally {
+      btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Find places';
+      btn.disabled = false;
+    }
+  }
+
+  function handleError(err) {
+    console.error('Geolocation error:', err);
+    setStatus('<i class="fa-solid fa-triangle-exclamation"></i> Could not get location', 'err');
+  }
+</script>
+</body>
+</html>
