@@ -1,22 +1,18 @@
+// app.js
+console.log("LOADED APP:", __filename);
 const express = require('express');
-const app = express();
-const port = 3000;
 require('dotenv').config();
+
+const app = express();
+
 app.set('view engine', 'ejs');
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-function hii() {
-  // Add this temporary test at the top of your route
-fetch("https://overpass.openstreetmap.ru/api/interpreter")
-  .then(r => console.log("Reachable, status:", r.status))
-  .catch(e => console.log("Cannot reach:", e.message));
-
-}
-
 function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371000; // Earth radius in meters
+  const R = 6371000;
   const toRad = deg => deg * Math.PI / 180;
 
   const dLat = toRad(lat2 - lat1);
@@ -24,48 +20,15 @@ function haversine(lat1, lon1, lat2, lon2) {
 
   const a =
     Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.cos(toRad(lat1)) *
+    Math.cos(toRad(lat2)) *
     Math.sin(dLon / 2) ** 2;
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return (R * c/1000); // distance in meters
+  return (R * c / 1000);
 }
 
-// ---------- build Overpass query ----------
-function buildOverpassQuery(lat, lon, radius, prefs) {
-  const filters = [];
-
-  // map your “preferences” → Overpass filters
-  if (prefs.includes("food")) {
-    filters.push('node["amenity"="restaurant"]');
-    filters.push('node["amenity"="cafe"]');
-    filters.push('node["amenity"="fast_food"]');
-  }
-
-  if (prefs.includes("shopping")) {
-    filters.push('node["shop"="mall"]');
-    filters.push('node["shop"="supermarket"]');
-    filters.push('node["shop"="clothes"]');
-  }
-
-  // if nothing was selected, default to restaurants
-  if (filters.length === 0) {
-    filters.push('node["amenity"="restaurant"]');
-  }
-
-  // Overpass QL query string
-  return `
-     [out:json][timeout:25];
-    (
-      ${filters.map(f => `${f}(around:${radius},${lat},${lon});`).join("\n")}
-    );
-    out;
-  `;
-}
-
-
-// ---------- call Overpass + shape data ----------
 async function fetchOSM(lat, lon, radius, prefs) {
   const categoryMap = {
     food: "catering.restaurant,catering.cafe,catering.fast_food",
@@ -77,30 +40,49 @@ async function fetchOSM(lat, lon, radius, prefs) {
     .filter(Boolean)
     .join(",");
 
-  const url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${lon},${lat},${radius}&limit=50&apiKey=${process.env.GEOAPIFY_KEY}`;
+  const url =
+    `https://api.geoapify.com/v2/places?categories=${categories}` +
+    `&filter=circle:${lon},${lat},${radius}` +
+    `&limit=50&apiKey=${process.env.GEOAPIFY_KEY}`;
 
-  
   try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Geoapify error: " + res.status);
+    const response = await fetch(url);
 
-    const data = await res.json();
+    if (!response.ok) {
+      throw new Error(`Geoapify error ${response.status}`);
+    }
+
+    const data = await response.json();
 
     return data.features.map(f => ({
       name: f.properties.name || "Unnamed place",
       lat: f.geometry.coordinates[1],
       lon: f.geometry.coordinates[0],
-      distance: Number((haversine(lat, lon, f.geometry.coordinates[1], f.geometry.coordinates[0])).toFixed(1)),
-      types: prefs // simplified
+      distance: Number(
+        haversine(
+          lat,
+          lon,
+          f.geometry.coordinates[1],
+          f.geometry.coordinates[0]
+        ).toFixed(1)
+      ),
+      types: prefs
     }));
-
   } catch (err) {
-    console.error("Geoapify error:", err);
+    console.error(err);
     return [];
   }
 }
 
+// Routes
+app.get('/pid', (req, res) => {
+  console.log('PID route hit by worker', process.pid);
+  res.send(`PID: ${process.pid}`);
+});
 
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
 
 app.get('/home', (req, res) => {
   res.render('index');
@@ -110,59 +92,70 @@ app.get('/forms', (req, res) => {
   res.render('form');
 });
 
-app.get('/hello', (req, res) => {
-  res.send("hiii from backend");
+app.get('/xyz987', (req, res) => {
+  res.send('XYZ987 works');
 });
+
+app.get('/hello', (req, res) => {
+  res.send('hiii from backend');
+});
+
 app.get('/location', (req, res) => {
   res.render('loc');
 });
 
 app.post('/submit', (req, res) => {
-  console.log(req.body);  // { username: "whatever user typed" }
+  console.log(req.body);
   res.send("Received!");
 });
 
 app.post('/saveUser', (req, res) => {
-  console.log(req.body);  
-  // { name: "Sheril", age: 22 }
-
+  console.log(req.body);
   res.send("Data received successfully!");
 });
 
-// Define POIS and haversine() OUTSIDE this route
-
 app.post('/api/location', async (req, res) => {
-  const { lat, lon, radius, prefs } = req.body;  // <-- names MUST match frontend
-  console.log(req.body);
-  const radiusNum = Number(radius)*1000;              // convert string -> number
-  
+  const { lat, lon, radius, prefs } = req.body;
 
-  // ✅ Validation
+  const radiusNum = Number(radius) * 1000;
+
   if (
     typeof lat !== "number" ||
     typeof lon !== "number" ||
     Number.isNaN(radiusNum) ||
     radiusNum <= 0 ||
-  radiusNum > 50000 ||
+    radiusNum > 50000 ||
     !Array.isArray(prefs) ||
     prefs.length === 0
   ) {
-    console.log("Not Valid:", req.body);
     return res.status(400).send("Invalid Input");
   }
- 
-  const results = await fetchOSM(lat,lon,radiusNum,prefs);
-  console.log(results);
+
+  const results = await fetchOSM(
+    lat,
+    lon,
+    radiusNum,
+    prefs
+  );
+
   res.json({
-      count: results.length,
-      results
-    });
-
+    count: results.length,
+    results
+  });
 });
 
-//how
+console.log('Registered routes:');
 
+app._router?.stack
+  ?.filter(layer => layer.route)
+  .forEach(layer => {
+    console.log(layer.route.path);
+  });
 
-app.listen(port, () => {
-  console.log(`Server running at ${port}`);
+  app.get('/pid', (req, res) => {
+  res.send(`PID: ${process.pid}`);
 });
+
+console.log('PID route added');
+
+module.exports = app;
